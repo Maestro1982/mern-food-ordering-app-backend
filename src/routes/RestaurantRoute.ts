@@ -7,6 +7,16 @@ const router = express.Router();
 
 // /api/restaurant => endpoints
 router.get(
+  '/:restaurantId',
+  param('restaurantId')
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage('RestaurantId parameter must be a valid string'),
+  RestaurantController.getRestaurant
+);
+
+router.get(
   '/search/:city',
   param('city')
     .isString()
