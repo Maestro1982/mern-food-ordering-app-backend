@@ -20,8 +20,13 @@ cloudinary.config({
 });
 
 const app = express();
-app.use(express.json());
+
 app.use(cors());
+
+// You need to use express.raw instead of express.json because of the validation and security reasons.
+app.use('/api/order/checkout/webhook', express.raw({ type: '*/*' }));
+
+app.use(express.json());
 
 app.get('/health', async (req: Request, res: Response) => {
   res.send({ message: 'health OK!' });
