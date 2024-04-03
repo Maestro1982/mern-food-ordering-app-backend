@@ -3,6 +3,7 @@ import cloudinary from 'cloudinary';
 import mongoose from 'mongoose';
 
 import Restaurant from '../models/restaurant';
+import Order from '../models/order';
 
 const createMyRestaurant = async (req: Request, res: Response) => {
   try {
@@ -76,6 +77,25 @@ const updateMyRestaurant = async (req: Request, res: Response) => {
   }
 };
 
+const getMyRestaurantOrders = async (req: Request, res: Response) => {
+  try {
+    const restaurant = await Restaurant.findOne({ user: req.userId });
+
+    if (!restaurant) {
+      return res.status(404).json({ message: 'Restaurant not found' });
+    }
+
+    const orders = await Order.find({ restaurant: restaurant._id })
+      .populate('restaurant')
+      .populate('user');
+
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Something went wrong' });
+  }
+};
+
 const uploadImage = async (file: Express.Multer.File) => {
   // Get the image from memory
   const image = file;
@@ -94,4 +114,5 @@ export default {
   createMyRestaurant,
   getMyRestaurant,
   updateMyRestaurant,
+  getMyRestaurantOrders,
 };
